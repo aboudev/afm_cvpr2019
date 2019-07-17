@@ -69,19 +69,21 @@ def save(data_dict, cfg):
     if osp.isdir(output_dir) is not True:
         os.makedirs(output_dir)
 
-    output_path = osp.join(output_dir, fname+'.mat')
-    
-    sio.savemat(output_path, mdict={
-        'height': height,
-        'width': width,
-        'gt': data_dict['lines_gt'],
-        'pred': lines,
-    })
-
-    
-
-    
+    if cfg.TEST.SAVETXT:
+      # save as text file, only 2d array lines
+      output_path = osp.join(output_dir, fname + '.afm')
+      np.savetxt(output_path, lines)
+    else:
+      # save as .mat file
+      output_path = osp.join(output_dir, fname + '.mat')
+      sio.savemat(output_path, mdict={
+          'height': height,
+          'width': width,
+          'gt': data_dict['lines_gt'],
+          'pred': lines,
+      })
     # lines_pred = data_dict['lines_pred']
+
 
 def build_output_method(cfg):
     assert cfg.TEST.OUTPUT_MODE in registry.OUTPUT_METHODS
